@@ -152,7 +152,7 @@ def roughStitchGeo(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_
     cv2.imwrite(imagepath+"GeoPL"+savename,PLimg)
     print("partial Geometric PL geometric image saved as: ","GeoPL"+savename)
     
-def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=False):
+def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=False,manualStitch=False):
     """
         Stitches a sequence of images together based on geometric alignment and optional drift correction.
         Parameters:
@@ -177,6 +177,8 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
             Name of the saved stitched image file (default is "stitched_image_cont.png").
         drift : [px/img], optional
             Drift is [px/img] to account for different speeds of the axes. Default is False.
+        manualStitch : bool, optional
+            Only set true if using in manualStitch.py. It does its own rotations for more precise stitching. Default is False.
         Returns:
         --------
         None
@@ -205,11 +207,14 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
     dpf=speed/60/FPS #distance per frame (mm)
     print("Images loaded for continuous stitch. number of images: ",len(images))
     ###########
-    # UNDISTORT
+    # UNDISTORT. 
     ###########
-    #imgUndistorted=ProcessInGaAs.undistort(images,K,P,DIM)
-    #imgUndistorted = [np.rot90(image, k=3) for image in imgUndistorted] #rotate images 90 degrees counterclockwise
-    imgUndistorted = images #DEBUG: only for manual stitcch
+    #Manualstitch has own undistortion and rotation
+    if manualStitch:
+        imgUndistorted=images
+    else:
+        imgUndistorted=ProcessInGaAs.undistort(images,K,P,DIM)
+        imgUndistorted = [np.rot90(image, k=3) for image in imgUndistorted] #rotate images 90 degrees counterclockwise 
     #We know the physical position of the traveled distance, which corresponds to a pixel dist
     #dist_travel/cameraHeight=d/f
     doffset=200/cameraHeight*f #distance in mm on image plane

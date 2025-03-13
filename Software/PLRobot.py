@@ -431,9 +431,10 @@ def main():
     if scantype==2:
         #Continuous scan stitch:
         image_files = [f for f in os.listdir(os.path.join(cwd, "Images")) if f.endswith('.raw') or f.endswith('.tiff')]
-        #Only get scan_cont images
-        image_files = [f for f in image_files if 'scan_cont' in f] 
-        stitchImages.stitchCont(os.path.join(image_files[-1]),K,P,DIM) #stitch the last of these
+        #Only get latest scan_cont images 
+        latest_image_file = max([os.path.join(cwd, "Images", f) for f in image_files if 'scan_cont' in f], key=os.path.getctime)
+        images = tifffile.imread(latest_image_file)
+        stitchImages.stitchCont(images,K,P,DIM) #stitch the last of these
         pass
 if __name__ == "__main__":
     #GUI() #TODO: Implement GUI

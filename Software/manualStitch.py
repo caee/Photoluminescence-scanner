@@ -74,7 +74,7 @@ def manualstitch(source,calpath,rotation=0,speed=5000,drift=0.0466,nsteps=100,FP
         print("shape after: ",np.shape(imagerot))
     print("Images rotated")
     #Image stitching
-    stitchImages.roughStitchCont(imagerot,K,P,DIM,source,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=drift)
+    stitchImages.roughStitchCont(imagerot,K,P,DIM,source,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=drift,manualStitch=True)
     print("stitch done!")
 def subtract(source1,source2,calpath,rotation=0,speed=4000,drift=0.0466,nsteps=100,FPS=50):
     """
