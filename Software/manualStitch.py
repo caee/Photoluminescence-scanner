@@ -203,7 +203,7 @@ def main():
 
     #User variables:
     #path=os.path.join(impath,"scan_cont_2025-02-24_15-53.tiff")
-    path=os.path.join(impath,"scan_cont_2025-02-28_14-18_10ms_1_5A_calibrated_lowgain_higheff.tiff")
+    path=os.path.join(impath,"scan_cont_2025-03-13_20-52.tiff")
     
     rotation=180+88 #In degrees
     rotation=90
@@ -215,7 +215,6 @@ def main():
     path2=os.path.join(impath,"scan_cont_2025-02-28_15-51_10ms_1_3A_low_noIR_outdoor.tiff")
 
     #Run either manualstitch or savevideo
-    path=os.path.join(cwd, "Images", path)
     #manualstitch(path,calpath,rotation,speed,drift,nsteps,FPS)
     savevideo(path,calpath,rotation)
     #subtract(path1,path2,calpath)
@@ -304,7 +303,7 @@ def cropRaw():
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 if __name__ == "__main__":
-    #main()
+    main()
     #loadSnapshot()
     #histogramPlot()
-    cropRaw()
+    # cropRaw()
