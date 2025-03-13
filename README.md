@@ -1,6 +1,6 @@
 ## Photoluminescence Scanner
 
-Thesis Project 'Development of a diagnostic imaging system for field inspection solar photovoltaic PV plants' in collaboration with DTU Electro.
+Thesis Project `Development of a diagnostic imaging system for field inspection solar photovoltaic PV plants` in collaboration with DTU Electro.
 Carl Emil Elling, 2025
 
 For access to thesis, find on DTU internal FindIT or contact at carlemilelling@hotmail.com
@@ -15,7 +15,8 @@ For access to thesis, find on DTU internal FindIT or contact at carlemilelling@h
 
 1. **Download the FLI API:** Please download the proprietary First Light Imaging (FLI) API from their [website](https://andor.oxinst.com/downloads/view/first-light-imaging-sdk-installer) (user login required).
 2. **Add FLI API to Work Folder:** Add the downloaded FLI API to the work folder to use the main script `PLRobot.py`.
-3. Connect gantry and camera according to the 
+3. Connect gantry and FLI C-RED 3 camera according to the thesis instructions.
+4. Run PLRobot.py. Output images will be in the `Images`folder
 
 ### License
 
