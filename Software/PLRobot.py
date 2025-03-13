@@ -157,7 +157,7 @@ def scanContinuous(gcode_handler,context,savePath,frameRate,speed=5000):
             sys.exit()
 
     gcode_handler.set_position(200,0)
-    gcode_handler.set_position(dist_travel,dist_travel)
+    gcode_handler.set_position(dist_travel+100,dist_travel)
     currentDT = datetime.datetime.now()
     currentDT=currentDT.strftime("%Y-%m-%d_%H-%M")
     imageAcquisition.acquireImage(context,bufferSize,frameRate,nImages,savePath, fileName="scan_cont_{}".format(currentDT))
