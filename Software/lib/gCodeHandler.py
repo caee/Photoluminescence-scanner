@@ -10,7 +10,7 @@ class GCodeHandler:
         port (str): The serial port to connect to.
         baudrate (int): The baud rate for the serial connection. Default is 115200.
         timeout (int): The timeout for the serial connection in seconds. Default is 1.
-        speed (int): The speed of the gantry. Default is 1000.
+        speed (int): The speed of the gantry. Default is 5000.
         unit (str): The unit of measurement for the gantry. Default is "mm".
         serial_connection (serial.Serial): The serial connection object.
     Methods:
@@ -142,6 +142,11 @@ class GCodeHandler:
 
 
 def get_available_ports():
+        """
+        Get a list of available serial ports.
+        Returns:
+            ports: A list of available serial ports.
+        """
         ports = serial.tools.list_ports.comports()
         # return [port.device for port in ports]
         return ports

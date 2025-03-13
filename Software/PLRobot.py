@@ -97,6 +97,18 @@ def calibrateGantry(gcode_handler):
     gcode_handler.wait()
     print("Gantry homed!")
 def connectGantry():
+    """
+    Connects to the gantry by selecting an available port and initializing the GCodeHandler.
+    This function lists all available ports, prompts the user to select one, and attempts to 
+    establish a connection to the gantry using the selected port. If the connection is successful, 
+    it returns an instance of GCodeHandler. If the connection fails, it prints an error message 
+    and exits the program.
+    Returns:
+        gCodeHandler: An instance of the GCodeHandler class if the connection is successful.
+    Raises:
+        SystemExit: If there is an error connecting to the gantry.
+    """
+
     available_ports = gCodeHandler.get_available_ports()
     print("Available ports:")
     #choose between available ports
@@ -114,10 +126,25 @@ def connectGantry():
     return gcode_handler
 
 def scanContinuous(gcode_handler,context,savePath,frameRate,speed=5000):
+    """
+    Perform a continuous scan of a PV panel using a gantry system and save the acquired images.
+    Parameters:
+        gcode_handler (object): The handler object for controlling the gantry system.
+        context (object): FLI context object for image acquisition.
+        savePath (str): path where the scanned images will be saved.
+        frameRate (int): frame rate for image acquisition.
+        speed (int, optional): speed of the gantry in mm/min. Default is 5000 mm/min.
+    Raises:
+        ValueError: If the scan is interrupted by the user.
+    Notes:
+    - The user is prompted to place the PV panel under the light source and remove the camera cover before starting the scan.
+    - The function calculates the number of images to be acquired based on the travel distance and frame rate.
+    - The function waits for the gantry to complete its movement before finishing.
+    - The scanned image is saved with a timestamp in the filename.
+    """
     offsetBegin=500 #offset from the first edge of the gantry to end stops. This is the 0-point in real life
     offsetEnd=100 #offset from the last edge of the gantry to max travel of the axes
-    dist_travel=1800#(2500-offsetBegin-offsetEnd) #Distance with offset included
-    speed=5000 #mm/min
+    dist_travel=2000#(2500-offsetBegin-offsetEnd) #Distance with offset included
     nImages=int(dist_travel/(speed/60)*frameRate)
     bufferSize=nImages+400
     gcode_handler.set_speed([speed,speed]) #set speed for both axes
@@ -139,7 +166,7 @@ def scanContinuous(gcode_handler,context,savePath,frameRate,speed=5000):
     
 def scanEL(gcode_handler,context,savePath,frameRate,speed=5000,nsteps=3):
     """
-    Only moves camera axis
+    Only moves camera axis. Not a full function yet.
     """    
     offsetBegin=500 #offset from the first edge of the gantry to end stops. This is the 0-point in real life
     offsetEnd=100 #offset from the last edge of the gantry to max travel of the axes
@@ -164,6 +191,24 @@ def scanEL(gcode_handler,context,savePath,frameRate,speed=5000,nsteps=3):
     gcode_handler.wait()
     print("Full panel scanned! Image saved as scan_EL_cont_{}.tiff".format(currentDT))
 def scan(gcode_handler,context,savePath,frameRate,speed=5000,nsteps=3):
+    """
+    Perform a stepped photoluminescence scan using a gantry system.
+    Parameters:
+        gcode_handler (object): The handler object to control the gantry system.
+        context (object): The context for image acquisition.
+        savePath (str): The path where the captured images will be saved.
+        frameRate (int): The frame rate for image acquisition.
+        speed (int, optional): The speed of the gantry movement in mm/min. Default is 5000.
+        nsteps (int, optional): The number of steps for the scan. Default is 3.
+    Raises:
+        ValueError: If the scan is interrupted by the user.
+    Notes:
+    - Ensure the PV panel is placed under the light source and the light source is turned on.
+    - Remove the camera cover before starting the scan.
+    - The function will prompt the user to move to each position and wait for confirmation.
+    Example:
+    scan(gcode_handler, context, "path/to/save", 30)
+    """
     #camera gantry position array
     offsetBegin=500 #offset from the first edge of the gantry to end stops. This is the 0-point in real life
     offsetEnd=100 #offset from the last edge of the gantry to max travel of the axes
@@ -202,7 +247,7 @@ def scan(gcode_handler,context,savePath,frameRate,speed=5000,nsteps=3):
 
 def stitch(imagepath,K,P,DIM,scantype,width=640,height=512):
     """
-    Stitches images from a given file path using specified camera parameters.
+    Stitches images  from stepped scan method. From a given file path using specified camera parameters.
     Parameters:
     -----------
     imagepath : str
@@ -276,10 +321,16 @@ def stitch(imagepath,K,P,DIM,scantype,width=640,height=512):
     #lightPosArr=[] #Light Position Array
 
 def stopCamera(context):
+    """
+    Stops camera context using FLI API
+    """
     FliSdk_V2.Stop(context)
     FliSdk_V2.Exit(context)
     print("Camera disconnected")
 def stopGantry(gcode_handler):
+    """
+    Stops gantry by disconnecting serial connection.
+    """
     gcode_handler.disconnect()
 def main():
     ####

@@ -60,7 +60,7 @@ def lin_stretch_img(img, low_prc, high_prc):
 
     stretch_img = (img.astype(np.float32) - lo) * (255/(hi-lo))  # Linear stretch: lo goes to 0, hi to 255.
     stretch_img = stretch_img.clip(0, 255).astype(np.uint8)  # Clip range to [0, 255] and convert to uint8
-    return stretch_img
+    return stretch_im
 
 def CLAHE_STRETCH(img):
     """Apply CLAHE (Contrast Limited Adaptive Histogram Equalization) to the image."""
@@ -140,9 +140,28 @@ def display_and_save_video(image, bounding_box, output_file):
 
 #def acquireCalSequence(context):
 def int16_2_uint16(img):
+    """
+    Normalize a 16-bit signed integer image to a 16-bit unsigned integer image.
+    Parameters:
+    img (numpy.ndarray): Input image with 16-bit signed integer pixel values.
+    Returns:
+    numpy.ndarray: Normalized image with 16-bit unsigned integer pixel values.
+    """
     norm_img = cv2.normalize(img, dst=None, alpha=0, beta=65535,norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_16U)
     return norm_img
 def int16_2_uint8(img):
+    """
+    Convert a 16-bit integer image to an 8-bit unsigned integer image.
+
+    This function normalizes the input 16-bit integer image to the range [0, 255]
+    and converts it to an 8-bit unsigned integer image.
+
+    Parameters:
+    img (numpy.ndarray): Input image with 16-bit integer pixel values.
+
+    Returns:
+    numpy.ndarray: Output image with 8-bit unsigned integer pixel values.
+    """
     norm_img = cv2.normalize(img, dst=None, alpha=0, beta=255,norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
     return norm_img
 
@@ -185,7 +204,7 @@ def calibrateRaw(rawImgs, checkerboard=(6,8),disp=False):
     Returns:
     tuple: A tuple containing:
         - K (ndarray): Camera matrix.
-        - D (ndarray): Distortion coefficients.
+        - P (ndarray): Distortion coefficients.
     Raises:
     AssertionError: If all images are not the same size.
     Notes:
@@ -193,7 +212,7 @@ def calibrateRaw(rawImgs, checkerboard=(6,8),disp=False):
     - The function assumes that the input images are grayscale.
     - subpixel fisheye calibration code with inspiration from https://medium.com/@kennethjiang/calibrate-fisheye-lens-using-opencv-333b05afa0b0
     Example:
-    >>> K, D = calibrateRaw(rawImgs, checkerboard=(6, 8), disp=True)
+    >>> K, P, DIMS = calibrateRaw(rawImgs, checkerboard=(6, 8), disp=True)
     """
     print("Calibrating Camera")
     images=int16_2_uint8(rawImgs) # Convert int16 to uint8 (for findChessboardCorners function)
@@ -247,7 +266,22 @@ def calibrateRaw(rawImgs, checkerboard=(6,8),disp=False):
     print("D=np.array(" + str(D.tolist()) + ")")
     return K,D,DIM
 def loadCal(calpath,width,height):
-    #CalPath is path to calibration files and
+    """
+    Loads calibration matrices from the specified path. If the calibration files are not found,
+    prompts the user to perform calibration using a pre-set calibration video.
+    Parameters:
+    calpath (str): The path to the directory containing the calibration files.
+    width (int): The width of the image used for calibration.
+    height (int): The height of the image used for calibration.
+    Returns:
+    tuple: A tuple containing the calibration matrices K, P, and DIM.
+    Raises:
+    SystemExit: If the user chooses not to perform calibration when prompted.
+    Notes:
+    - The function expects the calibration files to be named 'K_matrix.npy', 'P_matrix.npy', and 'DIM_matrix.npy'.
+    - If calibration is performed, the function saves the new calibration matrices to the specified path.
+    - The calibration process currently supports a hardcoded checkerboard calibration file.
+    """
     try:
         K=np.load(os.path.join(calpath,"K_matrix.npy"))#,allow_pickle=True)
         P=np.load(os.path.join(calpath,"P_matrix.npy"))#,allow_pickle=True)

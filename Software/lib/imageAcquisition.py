@@ -21,6 +21,7 @@ def initCamera(context,frameRate,tintVal,conversionGain="Medium"):
     context (object): The FLI SDK context.
     frameRate (float): The desired frame rate for the camera.
     tintVal (float): The desired exposure time (tint) for the camera in milliseconds.
+    conversionGain (str): The desired conversion gain for the camera. Allowed values are "low", "medium", "high".
 
     Returns:
     None
@@ -331,6 +332,20 @@ def EnableAdaptBias(context):
 #     print("Bias built!")
 
 def setConversionGain(context,conversionGain):
+    """
+    Sets the conversion gain for the given context.
+
+    Parameters:
+    context (object): The context in which to set the conversion gain.
+    conversionGain (str): The desired conversion gain level. 
+                            Accepted values are "low", "medium", and "high".
+
+    Returns:
+    None
+
+    Prints a message indicating whether the conversion gain was successfully set.
+    If an invalid conversion gain is provided, it defaults to "medium" and prints a warning message.
+    """
     if conversionGain.lower()=="low":
         res =FliSdk_V2.FliCredThree.SetConversionGain(context, conversionGain.lower())
     elif conversionGain.lower()=="medium": 

@@ -154,11 +154,41 @@ def roughStitchGeo(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_
     
 def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=False):
     """
-    Based on the geometric stitch. Just different appending of images.
-    Drift is [px/img] to account for different speeds of the axes.
+        Stitches a sequence of images together based on geometric alignment and optional drift correction.
+        Parameters:
+        -----------
+        images : list of ndarray
+            List of images to be stitched.
+        K : ndarray
+            Camera matrix for undistortion.
+        P : ndarray
+            Distortion coefficients.
+        DIM : tuple
+            Dimension of the images.
+        imagepath : str
+            Path where the stitched image will be saved.
+        speed : float
+            Speed of the scanning process in mm/min.
+        nsteps : int
+            Number of steps in the scanning process.
+        FPS : int
+            Frames per second of the image capture.
+        savename : str, optional
+            Name of the saved stitched image file (default is "stitched_image_cont.png").
+        drift : [px/img], optional
+            Drift is [px/img] to account for different speeds of the axes. Default is False.
+        Returns:
+        --------
+        None
+            The function saves the stitched image to the specified path and displays it.
+        Notes:
+        ------
+        - The function assumes that the images are captured in a continuous sequence.
+        - The function uses geometric properties and known physical distances to align the images.
+        - Drift correction is applied if the `drift` parameter is set to a value.
     """
-    offsetBegin=500 #offset from the first edge of the gantry to end stops
-    offsetEnd=100 #offset from the last edge of the gantry to max travel of the axes
+    # offsetBegin=500 #offset from the first edge of the gantry to end stops
+    # offsetEnd=100 #offset from the last edge of the gantry to max travel of the axes
     IRAngle=30 #Angle of the IR LED bar in degrees
     IRHeight=30 #Height of the IR LED bar in cm from PV panel
     cameraHeight=1045 #mm
@@ -224,6 +254,19 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
 
     
 def multiStitch(stitched_partiaL_images):
+    """
+    Stitches multiple partial images into a single image by cropping each image to the region with data and concatenating them horizontally.
+    Args:
+        stitched_partiaL_images (list of str): List of file paths to the partial images to be stitched.
+    Returns:
+        None
+    This function performs the following steps:
+    1. Reads the first image from the list and crops it to the region with data.
+    2. Iterates through the remaining images, reads and crops each one, and concatenates it horizontally to the previously processed images.
+    3. Displays the final stitched image.
+    4. Saves the final stitched image as "total_stitched_image.png".
+    """
+
     #crop to only the region with data
     print("Cropping image to only the region with data")
     PLimg=cv2.imread(stitched_partiaL_images[0],cv2.IMREAD_GRAYSCALE)
