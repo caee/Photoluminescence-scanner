@@ -10,11 +10,9 @@ from lib import gCodeHandler
 from lib import stitchImages
 import cv2
 
-import tkinter as tk
 import datetime
 import FLI_API
 import tifffile
-import numpy as np
 from FLI_API import FliSdk_V2
 
 
