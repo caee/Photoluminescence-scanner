@@ -208,15 +208,15 @@ def main():
     rotation=180+88 #In degrees
     rotation=90
     speed=4000
-    drift=0.0466
+    drift=0.02448
     FPS=50
     nsteps=3
     path1=os.path.join(impath,"scan_cont_2025-02-28_15-48_10ms_low_w_IR.tiff")
     path2=os.path.join(impath,"scan_cont_2025-02-28_15-51_10ms_1_3A_low_noIR_outdoor.tiff")
 
     #Run either manualstitch or savevideo
-    #manualstitch(path,calpath,rotation,speed,drift,nsteps,FPS)
-    savevideo(path,calpath,rotation)
+    manualstitch(path,calpath,rotation,speed,drift,nsteps,FPS)
+    # savevideo(path,calpath,rotation)
     #subtract(path1,path2,calpath)
 def loadSnapshot():
     """

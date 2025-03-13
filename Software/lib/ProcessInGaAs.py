@@ -60,7 +60,7 @@ def lin_stretch_img(img, low_prc, high_prc):
 
     stretch_img = (img.astype(np.float32) - lo) * (255/(hi-lo))  # Linear stretch: lo goes to 0, hi to 255.
     stretch_img = stretch_img.clip(0, 255).astype(np.uint8)  # Clip range to [0, 255] and convert to uint8
-    return stretch_im
+    return stretch_img
 
 def CLAHE_STRETCH(img):
     """Apply CLAHE (Contrast Limited Adaptive Histogram Equalization) to the image."""

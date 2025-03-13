@@ -224,7 +224,7 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
     
     peakIdx=ProcessInGaAs.find_peak_intensity(im) #Find peak intensity for PL detection - just to start the scan off. Could probably be hardcoded for robustness
     print("peakIdx: ",peakIdx)
-    peakIdx=234 #measured from image. Only manualstitch
+    peakIdx=215 #measured from image. Only manualstitch
 
     #given the speed, we know the distance between subsequent images. Interpolating line placement in each image
     PLimg=np.zeros((np.shape(im)[0], len(imgUndistorted)))
