@@ -4,7 +4,7 @@ Thesis Project `Development of a diagnostic imaging system for field inspection 
 
 Carl Emil Elling, 2025
 
-For access to thesis, find on DTU internal FindIT or contact at carlemilelling@hotmail.com
+For access to thesis, find on DTU internal document query FindIT or contact directly at carlemilelling@hotmail.com
 
 ### Project Structure
 
