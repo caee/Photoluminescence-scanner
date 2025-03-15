@@ -5,7 +5,7 @@ Thesis Project `Development of a diagnostic imaging system for field inspection 
 Carl Emil Elling, 2025
 
 System functionality is demonstrated in this video: https://youtu.be/fIywvakTZRA
-Example results found in the **Example Scans - Videos and images** folder
+Example results found in the `Example Scans - Videos and images` folder
 
 For access to thesis, find on DTU internal document query FindIT or contact directly at carlemilelling@hotmail.com
 
