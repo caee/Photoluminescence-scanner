@@ -108,7 +108,7 @@ def roughStitchGeo(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_
     offsetEnd=100 #offset from the last edge of the gantry to max travel of the axes
     IRAngle=30 #Angle of the IR LED bar in degrees
     IRHeight=30 #Height of the IR LED bar in cm from PV panel
-    cameraHeight=1045 #mm
+    cameraHeight=1080 #mm
     #FPS=50 #frames per second
     f=6 #focal length (mm)
     imremove=100 #DEBUG: remove images from end due to too long scans? (weird scan bug)
@@ -229,7 +229,8 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
     
     peakIdx=ProcessInGaAs.find_peak_intensity(im) #Find peak intensity for PL detection - just to start the scan off. Could probably be hardcoded for robustness
     print("peakIdx: ",peakIdx)
-    peakIdx=215 #measured from image. Only manualstitch
+    if manualStitch:
+        peakIdx=232 #measured from image. Only manualstitch
 
     #given the speed, we know the distance between subsequent images. Interpolating line placement in each image
     PLimg=np.zeros((np.shape(im)[0], len(imgUndistorted)))
@@ -250,7 +251,7 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
         
     #Histogram stretching PL image
     PLimg=ProcessInGaAs.crop_image(PLimg)
-    PLimg=ProcessInGaAs.lin_stretch_img(PLimg,20,99.99)
+    PLimg=ProcessInGaAs.lin_stretch_img(PLimg,1,99.99)
     cv2.imshow("PL image - continuous",PLimg)
     cv2.waitKey()
     cv2.destroyAllWindows()

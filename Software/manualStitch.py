@@ -121,7 +121,7 @@ def subtract(source1,source2,calpath,rotation=0,speed=4000,drift=0.0466,nsteps=1
     cv2.imshow("Subtracted image", imgdiff_stretched)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-def savevideo(source,calpath,rotation=0,speed=4000,drift=0.0466,nsteps=100,FPS=50):
+def savevideo(source,calpath,rotation=0,speed=4000,drift=0.02448,nsteps=100,FPS=50):
      # Load image file to be stitched:
     
     #Load calibration files
@@ -200,21 +200,27 @@ def main():
     cwd=os.getcwd()
     impath=os.path.join(cwd,"Images")#Read tiff or raw file with ProcessInGaAs
     calpath=os.path.join(cwd,"Calibration")
-
-    #User variables:
-    #path=os.path.join(impath,"scan_cont_2025-02-24_15-53.tiff")
-    path=os.path.join(impath,"scan_cont_2025-03-13_20-52.tiff")
     
+    ################
+    #User variables:
+    ################
+    #path=os.path.join(impath,"scan_cont_2025-02-24_15-53.tiff")
+    # path1=os.path.join(impath,"scan_cont_2025-02-28_15-48_10ms_low_w_IR.tiff")
+    # path2=os.path.join(impath,"scan_cont_2025-02-28_15-51_10ms_1_3A_low_noIR_outdoor.tiff")
+    path="C:/Users/carle/OneDrive - Danmarks Tekniske Universitet/THESIS/Work Files/Camera/Images/Large scans/scan_cont_2025-02-28_14-18_10ms_1_5A_calibrated_lowgain_higheff.tiff"    
     rotation=180+88 #In degrees
     rotation=90
-    speed=4000
-    drift=0.02448
+    speed=3500
+    #drift=0.02448 #new drift factor (for the 100mm offset in set_position(end+100,end))
+    drift=0.0466 #old drift factor (without 100mm offset)
     FPS=50
     nsteps=3
-    path1=os.path.join(impath,"scan_cont_2025-02-28_15-48_10ms_low_w_IR.tiff")
-    path2=os.path.join(impath,"scan_cont_2025-02-28_15-51_10ms_1_3A_low_noIR_outdoor.tiff")
+    
+    ###################
+    #Function selection
+    ###################
 
-    #Run either manualstitch or savevideo
+    #Run either manualstitch or savevideo or subtract. Comment out the other two.
     manualstitch(path,calpath,rotation,speed,drift,nsteps,FPS)
     # savevideo(path,calpath,rotation)
     #subtract(path1,path2,calpath)
@@ -223,10 +229,13 @@ def loadSnapshot():
     Function for loading a .raw snapshot captured with FLI software and undistorting it. Showing the result in a window.
     """
     cwd=os.getcwd()
-    impath=os.path.join(cwd,"Images/Results")#Read tiff or raw file with ProcessInGaAs
-    path1=os.path.join(impath,"snapshot_07032025_172117_higheff_dist_2ms_18A.raw")
+    impath=os.path.join(cwd,"Calibration")#Read tiff or raw file with ProcessInGaAs
+    path1=os.path.join(impath,"dots0_5ms_54cm_09012025_180353.raw")
     width, height = 640, 512
     im=ProcessInGaAs.load_raw_image(path1,width,height)
+    cv2.imshow("Image", ProcessInGaAs.lin_stretch_img(im[0],1,99.99))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     calpath=os.path.join(cwd,"Calibration")
     K,P,DIM=ProcessInGaAs.loadCal(calpath,width,height)
     imgUndistorted=ProcessInGaAs.undistort(im,K,P,DIM)

@@ -291,17 +291,11 @@ def stitch(imagepath,K,P,DIM,scantype,width=640,height=512):
         # cv2.destroyAllWindows()
         
         images=ProcessInGaAs.int16_2_uint16(images)
-        # cv2.imshow("Test image after normalization",ProcessInGaAs.lin_stretch_img(images[0],40,99.99))
-        # cv2.waitKey()
-        # cv2.destroyAllWindows()
-        #images=ProcessInGaAs.load_tiff_image(imagepath)
     else:
         print("File type not supported")
         return
     
     print("Images loaded. number of images: ",len(images))
-    
-    # savename = os.path.splitext(imagepath)[0] + "_stitched"
     savename="_stitched.png"
     stitchImages.roughStitchPL(images, K, P, DIM, imagepath,savename=savename,disp=False,EL=True)
     stitchImages.roughStitchGeo(images, K, P, DIM,imagepath, speed=5500, nsteps=3, FPS=50,savename=savename)
@@ -340,8 +334,9 @@ def main():
     frameRate = 50  # Camera Framerate
     tintVal = 1  # Exposure
     nsteps=3 #number of steps for scan
-
-
+    drift=0.2448 #drift in mm/step. Due to X and Y axis travelling different distances, but ending at same time. 
+    #Found experimentally. Correct if stitched images are not aligned in the end, but are in beginning.
+    
     ####
     #Undistortion Load
     ####
@@ -434,7 +429,7 @@ def main():
         #Only get latest scan_cont images 
         latest_image_file = max([os.path.join(cwd, "Images", f) for f in image_files if 'scan_cont' in f], key=os.path.getctime)
         images = tifffile.imread(latest_image_file)
-        stitchImages.stitchCont(images,K,P,DIM) #stitch the last of these
+        stitchImages.roughStitchCont(images,K,P,DIM,latest_image_file,speed,nsteps,frameRate,savename="stitched_image_cont.png",drift=drift) #stitch the last of these
         pass
 if __name__ == "__main__":
     #GUI() #TODO: Implement GUI
