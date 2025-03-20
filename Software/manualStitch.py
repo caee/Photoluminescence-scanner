@@ -45,7 +45,7 @@ def manualstitch(source,calpath,rotation=0,speed=5000,drift=0.0466,nsteps=100,FP
     # Read images
     print("Processing a .tiff file") #TODO: Implement tiff loading
     images = tifffile.imread(source)
-    images=ProcessInGaAs.int16_2_uint16(images)
+    #images=ProcessInGaAs.int16_2_uint16(images)
     print("Images loaded. Number of images: ",len(images))
     print("shape original: ",np.shape(images))
 
@@ -74,7 +74,7 @@ def manualstitch(source,calpath,rotation=0,speed=5000,drift=0.0466,nsteps=100,FP
         print("shape after: ",np.shape(imagerot))
     print("Images rotated")
     #Image stitching
-    stitchImages.roughStitchCont(imagerot,K,P,DIM,source,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=drift,manualStitch=True)
+    stitchImages.roughStitchCont(imagerot,K,P,DIM,source,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=drift,manualStitch=True,linStretchResult=False)
     print("stitch done!")
 def subtract(source1,source2,calpath,rotation=0,speed=4000,drift=0.0466,nsteps=100,FPS=50):
     """
@@ -207,9 +207,9 @@ def main():
     #path=os.path.join(impath,"scan_cont_2025-02-24_15-53.tiff")
     # path1=os.path.join(impath,"scan_cont_2025-02-28_15-48_10ms_low_w_IR.tiff")
     # path2=os.path.join(impath,"scan_cont_2025-02-28_15-51_10ms_1_3A_low_noIR_outdoor.tiff")
-    path="C:/Users/carle/OneDrive - Danmarks Tekniske Universitet/THESIS/Work Files/Camera/Images/Large scans/scan_cont_2025-02-28_14-18_10ms_1_5A_calibrated_lowgain_higheff.tiff"    
+    path="C:/Users/carle/OneDrive - Danmarks Tekniske Universitet/THESIS/Work Files/Camera/Images/scan_cont_2025-02-24_15-53.tiff"    
     rotation=180+88 #In degrees
-    rotation=90
+    # rotation=90
     speed=3500
     #drift=0.02448 #new drift factor (for the 100mm offset in set_position(end+100,end))
     drift=0.0466 #old drift factor (without 100mm offset)
@@ -230,18 +230,24 @@ def loadSnapshot():
     """
     cwd=os.getcwd()
     impath=os.path.join(cwd,"Calibration")#Read tiff or raw file with ProcessInGaAs
-    path1=os.path.join(impath,"dots0_5ms_54cm_09012025_180353.raw")
+    path1="C:/Users/carle/OneDrive - Danmarks Tekniske Universitet/THESIS/Work Files/Camera/Images/Results/snapshot_07032025_172117_higheff_dist_2ms_18A.raw"
     width, height = 640, 512
     im=ProcessInGaAs.load_raw_image(path1,width,height)
-    cv2.imshow("Image", ProcessInGaAs.lin_stretch_img(im[0],1,99.99))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("Image", ProcessInGaAs.lin_stretch_img(im[0],1,99.99))
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     calpath=os.path.join(cwd,"Calibration")
     K,P,DIM=ProcessInGaAs.loadCal(calpath,width,height)
     imgUndistorted=ProcessInGaAs.undistort(im,K,P,DIM)
-    cv2.imshow("Image", ProcessInGaAs.lin_stretch_img(imgUndistorted[0],1,99.99))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("Image", ProcessInGaAs.lin_stretch_img(imgUndistorted[0],1,99.99))
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # Save the undistorted image as a .tiff file
+    save_path = os.path.join(cwd, "undistorted_image.tiff")
+    print("image dtype: ",imgUndistorted[0].dtype)
+    print("image size: ",imgUndistorted[0].shape)
+    tifffile.imwrite(save_path, imgUndistorted[0])
+    print(f"Undistorted image saved as {save_path}")
 def histogramPlot():
     """
     Function for plotting histogram of scan before and after linstretch

@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 import os
 import sys
 import math
+import tifffile
 from lib import ProcessInGaAs
 
 def roughStitchPL(images,K,P,DIM,imagepath,savename="stitched_image.png",disp=False,EL=True):
@@ -152,9 +153,10 @@ def roughStitchGeo(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_
     cv2.imwrite(imagepath+"GeoPL"+savename,PLimg)
     print("partial Geometric PL geometric image saved as: ","GeoPL"+savename)
     
-def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=False,manualStitch=False):
+def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched_image_cont.png",drift=False,manualStitch=False,linStretchResult=False):
     """
         Stitches a sequence of images together based on geometric alignment and optional drift correction.
+        Returns a stitched image either as a .tiff (int16) or a .png (uint8 linearly stretched) and saves it to the specified path.
         Parameters:
         -----------
         images : list of ndarray
@@ -179,6 +181,8 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
             Drift is [px/img] to account for different speeds of the axes. Default is False.
         manualStitch : bool, optional
             Only set true if using in manualStitch.py. It does its own rotations for more precise stitching. Default is False.
+        linStretchResult : bool, optional
+            Linearly stretch the result image, converting it to uint8 in the process. Default is False
         Returns:
         --------
         None
@@ -233,12 +237,12 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
         peakIdx=232 #measured from image. Only manualstitch
 
     #given the speed, we know the distance between subsequent images. Interpolating line placement in each image
-    PLimg=np.zeros((np.shape(im)[0], len(imgUndistorted)))
+    PLimg=np.zeros((np.shape(im)[0], len(imgUndistorted)), dtype=np.int16)
     #if there is a drift variable, the peak index needs to be adjusted
     dvar=0
     if drift:
         dvar=drift
-    
+    # print("PLimg dtype before: ",PLimg.dtype)
     #Loop through and append
     for i in range(len(imgUndistorted[:imremove])):
         im=imgUndistorted[i]
@@ -248,14 +252,21 @@ def roughStitchCont(images,K,P,DIM,imagepath,speed,nsteps,FPS,savename="stitched
     #     cv2.imshow("image to be stitched",ProcessInGaAs.lin_stretch_img(im[:,int(peakIdx+dvar*i)-30:int(peakIdx+dvar*i)+30],1,99.99))
     #     cv2.waitKey(1)
     # cv2.destroyAllWindows()
-        
+    #find max intensity in the image
+    
     #Histogram stretching PL image
     PLimg=ProcessInGaAs.crop_image(PLimg)
-    PLimg=ProcessInGaAs.lin_stretch_img(PLimg,1,99.99)
-    cv2.imshow("PL image - continuous",PLimg)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-    cv2.imwrite(imagepath+"ContPL"+savename,PLimg)
+    # print("PLimg dtype: ",PLimg.dtype)
+    # print("max intensity in image: ",np.max(PLimg))
+    if linStretchResult:
+        PLimg=ProcessInGaAs.lin_stretch_img(PLimg,1,99.99)
+        cv2.imshow("PL image - continuous",PLimg)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+        cv2.imwrite(imagepath+"ContPL"+savename,PLimg)
+    else:
+        # print("saving .tiff file. dtype:",PLimg.dtype)
+        tifffile.imwrite("test.tiff",PLimg)
     print("partial Geometric PL continuous geometric image saved as: ","ContPL"+savename)
 
     

@@ -19,7 +19,7 @@ def load_raw_image(file_path, width, height):
     if image.size != num_images * width * height:
         raise ValueError(f"File size does not match expected dimensions: {num_images} images of {width}x{height}")
     image = image.reshape((num_images, height, width))
-    image= int16_2_uint16(image)
+    #image= int16_2_uint16(image)
     return image
 def crop_image(image):
     """Crop the image to only the columns with data."""
